@@ -1,7 +1,8 @@
 class NotesHandler {
-    constructor(service) {
+    constructor(service,validator) {
         this._service = service;
-
+        this._validator = validator;
+        
         this.postNoteHandler = this.postNoteHandler.bind(this);
         this.getNotesHandler = this.getNotesHandler.bind(this);
         this.getNoteByIdHandler = this.getNoteByIdHandler.bind(this);
@@ -11,9 +12,10 @@ class NotesHandler {
 
     postNoteHandler(request, h) {
         try {
+            this._validator.validateNotePayload(request.payload);
             const { title = 'untitled', body, tags } = request.payload;
 
-            this._service.addNote({ title, body, tags });
+            // this._service.addNote({ title, body, tags });
 
             const noteId = this._service.addNote({ title, body, tags });
 
@@ -62,7 +64,7 @@ class NotesHandler {
                 },
             };
         } catch (error) {
-            const response = h.responsez({
+            const response = h.response({
                 status: 'fail',
                 message: error.message,
             });
@@ -71,8 +73,9 @@ class NotesHandler {
         }
     }
 
-    putNoteByIdHandler(request) {
+    putNoteByIdHandler(request,h) {
         try {
+            this._validator.validateNotePayload(request.payload);
             const { id } = request.params;
 
             this._service.editNoteById(id, request.payload);
