@@ -1,6 +1,12 @@
 class NotesHandler {
     constructor(service) {
         this._service = service;
+
+        this.postNoteHandler = this.postNoteHandler.bind(this);
+        this.getNotesHandler = this.getNotesHandler.bind(this);
+        this.getNoteByIdHandler = this.getNoteByIdHandler.bind(this);
+        this.putNoteByIdHandler = this.putNoteByIdHandler.bind(this);
+        this.deleteNoteByIdHandler = this.deleteNoteByIdHandler.bind(this);
     }
 
     postNoteHandler(request, h) {
@@ -52,7 +58,7 @@ class NotesHandler {
             return {
                 status: 'success',
                 data: {
-                    notes,
+                    note,
                 },
             };
         } catch (error) {
@@ -87,7 +93,6 @@ class NotesHandler {
 
 
     deleteNoteByIdHandler(request, h) {
-
         try {
             const { id } = request.params;
             this._service.deleteNoteById(id);
@@ -98,7 +103,7 @@ class NotesHandler {
         } catch (error) {
             const response = h.response({
                 status: 'fail',
-                message: error.message,
+                message: 'Catatan tidak ditemukan',
             });
             response.code(404);
             return response;
