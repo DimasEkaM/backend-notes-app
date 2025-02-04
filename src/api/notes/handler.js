@@ -1,8 +1,10 @@
+const ClientError = require('../../exceptions/ClientError');
+
 class NotesHandler {
-    constructor(service,validator) {
+    constructor(service, validator) {
         this._service = service;
         this._validator = validator;
-        
+
         this.postNoteHandler = this.postNoteHandler.bind(this);
         this.getNotesHandler = this.getNotesHandler.bind(this);
         this.getNoteByIdHandler = this.getNoteByIdHandler.bind(this);
@@ -31,13 +33,22 @@ class NotesHandler {
 
             return response;
         } catch (error) {
+            if (error instanceof ClientError) {
+                const response = h.response({
+                    status: 'fail',
+                    message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
+            }
+
+            // Server ERROR!
             const response = h.response({
-                status: 'fail',
-                message: error.message,
+                status: 'error',
+                message: 'Maaf, terjadi kegagalan pada server kami.',
             });
-
-            response.code(400);
-
+            response.code(500);
+            console.error(error);
             return response;
         }
     }
@@ -64,16 +75,27 @@ class NotesHandler {
                 },
             };
         } catch (error) {
+            if (error instanceof ClientError) {
+                const response = h.response({
+                    status: 'fail',
+                    message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
+            }
+
+            // Server ERROR!
             const response = h.response({
-                status: 'fail',
-                message: error.message,
+                status: 'error',
+                message: 'Maaf, terjadi kegagalan pada server kami.',
             });
-            response.code(404);
+            response.code(500);
+            console.error(error);
             return response;
         }
     }
 
-    putNoteByIdHandler(request,h) {
+    putNoteByIdHandler(request, h) {
         try {
             this._validator.validateNotePayload(request.payload);
             const { id } = request.params;
@@ -85,14 +107,26 @@ class NotesHandler {
                 message: 'Catatan berhasil diperbarui',
             };
         } catch (error) {
+            if (error instanceof ClientError) {
+                const response = h.response({
+                    status: 'fail',
+                    message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
+            }
+
+            // Server ERROR!
             const response = h.response({
-                status: 'fail',
-                message: error.message,
+                status: 'error',
+                message: 'Maaf, terjadi kegagalan pada server kami.',
             });
-            response.code(404);
+            response.code(500);
+            console.error(error);
             return response;
         }
     }
+
 
 
     deleteNoteByIdHandler(request, h) {
@@ -104,14 +138,26 @@ class NotesHandler {
                 message: 'Catatan berhasil dihapus',
             };
         } catch (error) {
+            if (error instanceof ClientError) {
+                const response = h.response({
+                    status: 'fail',
+                    message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
+            }
+
+            // Server ERROR!
             const response = h.response({
-                status: 'fail',
-                message: 'Catatan tidak ditemukan',
+                status: 'error',
+                message: 'Maaf, terjadi kegagalan pada server kami.',
             });
-            response.code(404);
+            response.code(500);
+            console.error(error);
             return response;
         }
     }
+
 }
 
 module.exports = NotesHandler;
