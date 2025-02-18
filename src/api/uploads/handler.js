@@ -13,6 +13,22 @@ class UploadsHandler {
         this._validator.validateImageHeaders(data.hapi.headers);
         const filename = await this._service.writeFile(data, data.hapi);
 
+        // const response = h.response({
+        //     status: 'success',
+        //     data: {
+        //       fileLocation: filename,
+        //     },
+        //   });
+
+        // const fileLocation = await this._service.writeFile(data, data.hapi);
+
+        // const response = h.response({
+        //     status: 'success',
+        //     data: {
+        //         fileLocation,
+        //     },
+        // });
+
         const response = h.response({
             status: 'success',
             data: {
